@@ -1,0 +1,38 @@
+variables:
+  IMAGE: "app_image"
+  env: "app_name"
+  port: "8081"
+
+stages:
+  - build
+  - publish
+  - deploy
+
+build:
+  stage: build
+  tags: 
+    - hive-front-dev
+  script:
+    - docker build -t $IMAGE --no-cache .
+    - docker tag $IMAGE registry.example.pro/$IMAGE 
+  only:
+    - master
+
+publish:
+  stage: publish
+  tags: 
+    - hive-front-dev
+  script:
+    - docker push registry.example.pro/$IMAGE
+  only:
+    - master
+
+deploy:
+  stage: deploy
+  tags: 
+    - hive-front-dev
+  script:
+    - ansible-playbook /home/gitlab-runner/playbooks/front-deploy/deploy.yml -i /home/gitlab-runner/playbooks/front-deploy/inventory/dev -e "env=$env" -e "IMAGE=$IMAGE" -e "port=$port"
+  only:
+    - master
+

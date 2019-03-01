@@ -1,0 +1,32 @@
+---
+- name: Stop and remove container
+  shell: docker stop {{ env }} && docker rm {{ env }}
+  ignore_errors: yes
+
+- name: Clean orphan docker container and images
+  shell: docker system prune -a  -f
+  ignore_errors: yes
+
+- name: Create a network with options
+  docker_network:
+    name: front
+    ipam_options:
+      subnet: '172.90.0.0/24'
+
+- name: Deploy container
+  docker_service:
+    project_name: "{{ env }}"
+    pull: yes
+    definition:
+      version: '2'
+      services:
+        front:
+          image: registry.rusoft.pro/{{ IMAGE }}
+          ports:
+            - "{{ port }}:80"
+          container_name: "{{ env }}"
+      networks:
+        default:
+         external:
+            name: front
+

@@ -1,0 +1,5 @@
+### Develop environment ###
+
+[dev]
+hive ansible_host=172.26.133.117 ansible_user=apps
+

@@ -1,0 +1,5 @@
+### Production environment ###
+
+[hive]
+hive ansible_host=172.16.6.20 ansible_user=avdushkin
+
